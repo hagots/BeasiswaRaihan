@@ -4,21 +4,23 @@ import { collection, query, where, getDocs } from "https://www.gstatic.com/fireb
 
 const detailContent = document.getElementById('detailContent');
 
-// Ambil parameter id dari URL
-const urlParams = new URLSearchParams(window.location.search);
-const articleId = urlParams.get('id');
-
-if (!articleId) {
-  detailContent.innerHTML = `<div class="not-found">⚠️ Artikel tidak ditemukan (ID tidak ada).</div>`;
+if (!detailContent) {
+  console.error('❌ Elemen #detailContent tidak ditemukan!');
 } else {
-  loadArticleDetail(articleId);
+  const urlParams = new URLSearchParams(window.location.search);
+  const articleId = urlParams.get('id');
+
+  if (!articleId) {
+    detailContent.innerHTML = `<div class="not-found">⚠️ Artikel tidak ditemukan (ID tidak ada).</div>`;
+  } else {
+    loadArticleDetail(articleId);
+  }
 }
 
 async function loadArticleDetail(id) {
   try {
     detailContent.innerHTML = `<div class="loading-spinner">⏳ Memuat artikel...</div>`;
 
-    // Cari dokumen dengan ID tertentu
     const q = query(collection(db, 'artikel'), where('__name__', '==', id));
     const snapshot = await getDocs(q);
 
@@ -37,7 +39,6 @@ async function loadArticleDetail(id) {
       return;
     }
 
-    // Render detail
     const imageUrl = data.gambar || 'https://via.placeholder.com/800x400?text=No+Image';
     const tanggal = data.tanggal?.seconds
       ? new Date(data.tanggal.seconds * 1000).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })
