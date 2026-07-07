@@ -5,7 +5,6 @@ import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.
 const container = document.getElementById('articles-container');
 const tabBtns = document.querySelectorAll('.tab-btn');
 
-// Pengecekan elemen
 if (!container) {
   console.error('❌ Container #articles-container tidak ditemukan!');
 } else {
@@ -89,7 +88,7 @@ function renderArticles(data) {
       ? new Date(art.tanggal.seconds * 1000).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })
       : 'Tanpa tanggal';
     return `
-      <a href="detail.html?id=${art.id}" class="article-card-link" style="text-decoration:none; color:inherit; display:block;">
+      <a href="detail.html?id=${art.id}" class="article-card-link">
         <div class="article-card">
           <img class="card-image" src="${imageUrl}" alt="${art.judul}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x200?text=Gambar+Error'" />
           <div class="card-content">
@@ -107,7 +106,6 @@ function renderArticles(data) {
   }).join('');
 }
 
-// Event tab (hanya jika ada tombol)
 if (tabBtns.length > 0) {
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -121,5 +119,4 @@ if (tabBtns.length > 0) {
   console.warn('⚠️ Tidak ada tombol tab, tidak bisa pasang event listener.');
 }
 
-// Muat awal
 loadArticles('ptn');
