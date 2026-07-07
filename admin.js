@@ -21,25 +21,35 @@ const form = document.getElementById('articleForm');
 const editId = document.getElementById('editId');
 const judul = document.getElementById('judul');
 const kategori = document.getElementById('kategori');
+const penulis = document.getElementById('penulis');
+const gambar = document.getElementById('gambar');
 const ringkasan = document.getElementById('ringkasan');
 const konten = document.getElementById('konten');
 const submitBtn = document.getElementById('submitBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 const formStatus = document.getElementById('formStatus');
 const articleListContainer = document.getElementById('articleListContainer');
+const imagePreview = document.getElementById('imagePreview');
 
-let currentUser = null;
+// Preview gambar
+gambar.addEventListener('input', () => {
+  const url = gambar.value.trim();
+  if (url) {
+    imagePreview.src = url;
+    imagePreview.classList.add('show');
+  } else {
+    imagePreview.classList.remove('show');
+  }
+});
 
-// --- AUTH ---
+// Auth
 onAuthStateChanged(auth, user => {
   if (user) {
-    currentUser = user;
     loginSection.style.display = 'none';
     adminPanel.style.display = 'block';
     logoutBtn.style.display = 'inline-block';
     loadArticles();
   } else {
-    currentUser = null;
     loginSection.style.display = 'block';
     adminPanel.style.display = 'none';
     logoutBtn.style.display = 'none';
@@ -70,7 +80,7 @@ function showLoginStatus(msg, type) {
   loginStatus.className = 'status-msg ' + type;
 }
 
-// --- CRUD ---
+// CRUD
 async function loadArticles() {
   try {
     const q = query(collection(db, 'artikel'), orderBy('tanggal', 'desc'));
@@ -83,7 +93,7 @@ async function loadArticles() {
         <div class="article-item">
           <div class="info">
             <strong>${data.judul}</strong>
-            <small>${data.kategori === 'ptn' ? '🏛 PTN' : '🎓 Beasiswa'} | ${tanggal}</small>
+            <small>${data.kategori === 'ptn' ? '🏛 PTN' : '🎓 Beasiswa'} | ${tanggal} | ✍️ ${data.penulis || 'Admin'}</small>
           </div>
           <div class="actions">
             <button class="btn btn-secondary" data-id="${doc.id}" data-action="edit">✏️ Edit</button>
@@ -92,9 +102,8 @@ async function loadArticles() {
         </div>
       `;
     });
-    articleListContainer.innerHTML = html || '<p style="color:#888;">Belum ada artikel.</p>';
+    articleListContainer.innerHTML = html || '<p style="color:#94a3b8;">Belum ada artikel.</p>';
 
-    // Event listener untuk tombol edit & hapus
     document.querySelectorAll('[data-action="edit"]').forEach(btn => {
       btn.addEventListener('click', () => editArticle(btn.dataset.id));
     });
@@ -112,6 +121,8 @@ form.addEventListener('submit', async (e) => {
   const data = {
     judul: judul.value.trim(),
     kategori: kategori.value,
+    penulis: penulis.value.trim() || 'Admin',
+    gambar: gambar.value.trim() || '',
     ringkasan: ringkasan.value.trim(),
     konten: konten.value.trim(),
   };
@@ -123,11 +134,9 @@ form.addEventListener('submit', async (e) => {
 
   try {
     if (id) {
-      // Update
       await updateDoc(doc(db, 'artikel', id), data);
       showFormStatus('Artikel berhasil diperbarui!', 'success');
     } else {
-      // Tambah baru
       await addDoc(collection(db, 'artikel'), {
         ...data,
         tanggal: serverTimestamp()
@@ -147,8 +156,11 @@ function resetForm() {
   editId.value = '';
   judul.value = '';
   kategori.value = 'ptn';
+  penulis.value = '';
+  gambar.value = '';
   ringkasan.value = '';
   konten.value = '';
+  imagePreview.classList.remove('show');
   submitBtn.textContent = 'Simpan Artikel';
   formStatus.className = 'status-msg';
   formStatus.textContent = '';
@@ -165,6 +177,14 @@ async function editArticle(id) {
     editId.value = data.id;
     judul.value = data.judul;
     kategori.value = data.kategori;
+    penulis.value = data.penulis || '';
+    gambar.value = data.gambar || '';
+    if (gambar.value) {
+      imagePreview.src = gambar.value;
+      imagePreview.classList.add('show');
+    } else {
+      imagePreview.classList.remove('show');
+    }
     ringkasan.value = data.ringkasan || '';
     konten.value = data.konten;
     submitBtn.textContent = 'Update Artikel';
