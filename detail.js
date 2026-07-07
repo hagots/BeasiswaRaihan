@@ -44,6 +44,7 @@ async function loadArticleDetail(id) {
       ? new Date(data.tanggal.seconds * 1000).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })
       : 'Tanpa tanggal';
 
+    // === GAMBAR MENGGUNAKAN CLASS .detail-image ===
     detailContent.innerHTML = `
       <h1 style="font-size:2rem; font-weight:700; margin-bottom:0.5rem; color:#0f172a;">${data.judul}</h1>
       <div class="detail-meta">
