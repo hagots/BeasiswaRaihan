@@ -3,118 +3,169 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-  background: #f4f7fb;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f6f9fc;
+  color: #1e293b;
+  line-height: 1.6;
 }
 
 header {
-  background: #1a237e;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   color: white;
-  padding: 1.2rem 2rem;
+  padding: 1.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 header h1 {
-  font-size: 1.8rem;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+header h1 span {
+  color: #facc15;
 }
 
 .admin-link a {
-  color: #ffeb3b;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  padding: 0.6rem 1.5rem;
+  border-radius: 40px;
+  color: white;
   text-decoration: none;
-  font-weight: bold;
-  background: rgba(255,255,255,0.15);
-  padding: 0.5rem 1.2rem;
-  border-radius: 30px;
+  font-weight: 500;
   transition: 0.3s;
+  border: 1px solid rgba(255,255,255,0.2);
 }
 .admin-link a:hover {
-  background: rgba(255,255,255,0.3);
+  background: #facc15;
+  color: #0f172a;
+  border-color: #facc15;
 }
 
 .tabs {
   display: flex;
   background: white;
-  border-bottom: 2px solid #ddd;
   padding: 0 2rem;
   gap: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .tab-btn {
   background: transparent;
   border: none;
-  padding: 1rem 1.8rem;
-  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  color: #555;
+  color: #64748b;
   border-bottom: 3px solid transparent;
-  transition: 0.3s;
+  transition: 0.2s;
+  letter-spacing: 0.3px;
 }
 .tab-btn:hover {
-  color: #1a237e;
+  color: #0f172a;
 }
 .tab-btn.active {
-  color: #1a237e;
-  border-bottom-color: #1a237e;
+  color: #0f172a;
+  border-bottom-color: #facc15;
 }
 
 main {
-  flex: 1;
-  padding: 2rem;
   max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+  margin: 2rem auto;
+  padding: 0 2rem;
 }
 
 #articles-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
 }
 
 .article-card {
   background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  transition: transform 0.25s, box-shadow 0.25s;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 .article-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.article-card .card-image {
+  width: 100%;
+  height: 200px;
+  background: #e2e8f0;
+  object-fit: cover;
+  display: block;
+}
+.article-card .card-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 .article-card h3 {
-  font-size: 1.3rem;
-  margin-bottom: 0.5rem;
-  color: #1a237e;
+  font-size: 1.25rem;
+  margin-bottom: 0.4rem;
+  color: #0f172a;
+  line-height: 1.3;
 }
 .article-card .meta {
   font-size: 0.85rem;
-  color: #888;
-  margin-bottom: 0.7rem;
+  color: #94a3b8;
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 0.6rem;
+}
+.article-card .meta .author {
+  font-weight: 500;
+  color: #475569;
 }
 .article-card .summary {
-  color: #444;
+  color: #475569;
   line-height: 1.5;
+  flex: 1;
+  margin-bottom: 0.8rem;
+}
+.article-card .read-more {
+  color: #facc15;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+  border-bottom: 2px solid transparent;
+  transition: 0.2s;
+}
+.article-card:hover .read-more {
+  border-bottom-color: #facc15;
 }
 
-/* Modal */
+/* Modal detail */
 .modal {
   display: none;
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(15,23,42,0.7);
+  backdrop-filter: blur(4px);
   align-items: center;
   justify-content: center;
   z-index: 1000;
@@ -124,49 +175,68 @@ main {
 }
 .modal-content {
   background: white;
-  max-width: 700px;
-  width: 90%;
-  max-height: 80vh;
+  max-width: 800px;
+  width: 92%;
+  max-height: 90vh;
   overflow-y: auto;
+  border-radius: 20px;
   padding: 2rem;
-  border-radius: 16px;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.3);
 }
 .close-modal {
   position: absolute;
-  top: 12px;
-  right: 20px;
-  font-size: 2rem;
+  top: 16px;
+  right: 24px;
+  font-size: 2.2rem;
   cursor: pointer;
-  color: #888;
+  color: #94a3b8;
+  transition: 0.2s;
 }
 .close-modal:hover {
-  color: #000;
+  color: #0f172a;
 }
 #detail-title {
-  margin-bottom: 1rem;
-  color: #1a237e;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #0f172a;
+}
+#detail-meta {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+#detail-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
 }
 #detail-body {
   line-height: 1.8;
-  color: #222;
+  color: #1e293b;
   white-space: pre-wrap;
+  font-size: 1.05rem;
 }
 
 footer {
   text-align: center;
-  padding: 1.5rem;
-  color: #777;
+  padding: 2rem;
+  color: #94a3b8;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 3rem;
   background: white;
-  border-top: 1px solid #eee;
-  margin-top: 2rem;
 }
 
 /* Responsive */
-@media (max-width: 600px) {
-  header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+@media (max-width: 640px) {
+  header { padding: 1rem; }
+  header h1 { font-size: 1.5rem; }
   .tabs { padding: 0 0.5rem; overflow-x: auto; }
-  .tab-btn { padding: 0.8rem 1rem; font-size: 0.9rem; }
+  .tab-btn { padding: 0.8rem 1.2rem; font-size: 0.9rem; }
   #articles-container { grid-template-columns: 1fr; }
+  .modal-content { padding: 1.5rem; }
+  #detail-title { font-size: 1.5rem; }
 }
