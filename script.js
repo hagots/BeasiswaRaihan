@@ -14,7 +14,6 @@ const modalImage = document.getElementById('detail-image');
 const modalBody = document.getElementById('detail-body');
 const closeModal = document.querySelector('.close-modal');
 
-// Fungsi utama memuat artikel dengan fallback jika indeks belum dibuat
 async function loadArticles(kategori) {
   try {
     console.log(`📥 Memuat artikel untuk kategori: ${kategori}`);
@@ -23,7 +22,7 @@ async function loadArticles(kategori) {
     let useOrderBy = true;
 
     try {
-      // Coba pakai orderBy tanggal
+      // Coba dengan orderBy
       const q = query(
         collection(db, 'artikel'),
         where('kategori', '==', kategori),
@@ -31,9 +30,9 @@ async function loadArticles(kategori) {
       );
       snapshot = await getDocs(q);
     } catch (error) {
-      // Jika error karena indeks, kita tangkap dan jalankan tanpa orderBy
-      if (error.code === 'failed-precondition' && error.message.includes('index')) {
-        console.warn('⚠️ Indeks belum dibuat, mengambil data tanpa urutan dan sorting manual.');
+      // Jika error karena indeks, kita fallback ke query tanpa orderBy
+      if (error.message && error.message.includes('requires an index')) {
+        console.warn('⚠️ Indeks belum dibuat, mengambil data tanpa orderBy dan sorting manual.');
         useOrderBy = false;
         const q = query(
           collection(db, 'artikel'),
@@ -68,7 +67,6 @@ async function loadArticles(kategori) {
   }
 }
 
-// Render kartu artikel (sama seperti sebelumnya)
 function renderArticles(data) {
   if (data.length === 0) {
     container.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:#94a3b8; padding:3rem;">Belum ada artikel untuk kategori ini.</p>`;
