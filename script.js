@@ -7,12 +7,6 @@ let articles = [];
 
 const container = document.getElementById('articles-container');
 const tabBtns = document.querySelectorAll('.tab-btn');
-const modal = document.getElementById('detail-modal');
-const modalTitle = document.getElementById('detail-title');
-const modalMeta = document.getElementById('detail-meta');
-const modalImage = document.getElementById('detail-image');
-const modalBody = document.getElementById('detail-body');
-const closeModal = document.querySelector('.close-modal');
 
 async function loadArticles(kategori) {
   try {
@@ -22,7 +16,6 @@ async function loadArticles(kategori) {
     let useOrderBy = true;
 
     try {
-      // Coba dengan orderBy
       const q = query(
         collection(db, 'artikel'),
         where('kategori', '==', kategori),
@@ -30,7 +23,6 @@ async function loadArticles(kategori) {
       );
       snapshot = await getDocs(q);
     } catch (error) {
-      // Jika error karena indeks, kita fallback ke query tanpa orderBy
       if (error.message && error.message.includes('requires an index')) {
         console.warn('⚠️ Indeks belum dibuat, mengambil data tanpa orderBy dan sorting manual.');
         useOrderBy = false;
@@ -40,7 +32,7 @@ async function loadArticles(kategori) {
         );
         snapshot = await getDocs(q);
       } else {
-        throw error; // lempar error lain
+        throw error;
       }
     }
 
@@ -55,7 +47,6 @@ async function loadArticles(kategori) {
       articles.push({ id: doc.id, ...data });
     });
 
-    // Jika tidak pakai orderBy, urutkan manual (terbaru dulu)
     if (!useOrderBy) {
       articles.sort((a, b) => (b.tanggal?.seconds || 0) - (a.tanggal?.seconds || 0));
     }
@@ -79,47 +70,23 @@ function renderArticles(data) {
       ? new Date(art.tanggal.seconds * 1000).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })
       : 'Tanpa tanggal';
     return `
-      <div class="article-card" data-id="${art.id}">
-        <img class="card-image" src="${imageUrl}" alt="${art.judul}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x200?text=Gambar+Error'" />
-        <div class="card-content">
-          <h3>${art.judul}</h3>
-          <div class="meta">
-            <span class="author">✍️ ${art.penulis || 'Admin'}</span>
-            <span>📅 ${tanggal}</span>
+      <a href="detail.html?id=${art.id}" class="article-card-link" style="text-decoration:none; color:inherit; display:block;">
+        <div class="article-card">
+          <img class="card-image" src="${imageUrl}" alt="${art.judul}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x200?text=Gambar+Error'" />
+          <div class="card-content">
+            <h3>${art.judul}</h3>
+            <div class="meta">
+              <span class="author">✍️ ${art.penulis || 'Admin'}</span>
+              <span>📅 ${tanggal}</span>
+            </div>
+            <div class="summary">${art.ringkasan || art.konten.substring(0, 120) + '...'}</div>
+            <div class="read-more">Baca Selengkapnya →</div>
           </div>
-          <div class="summary">${art.ringkasan || art.konten.substring(0, 120) + '...'}</div>
-          <div class="read-more">Baca Selengkapnya →</div>
         </div>
-      </div>
+      </a>
     `;
   }).join('');
-
-  document.querySelectorAll('.article-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = card.dataset.id;
-      const artikel = articles.find(a => a.id === id);
-      if (artikel) showDetail(artikel);
-    });
-  });
 }
-
-function showDetail(artikel) {
-  modalTitle.textContent = artikel.judul;
-  const tanggal = artikel.tanggal?.seconds
-    ? new Date(artikel.tanggal.seconds * 1000).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })
-    : 'Tanpa tanggal';
-  modalMeta.innerHTML = `✍️ ${artikel.penulis || 'Admin'} &nbsp;•&nbsp; 📅 ${tanggal}`;
-  modalImage.src = artikel.gambar || 'https://via.placeholder.com/800x400?text=No+Image';
-  modalImage.alt = artikel.judul;
-  modalImage.onerror = function() { this.src = 'https://via.placeholder.com/800x400?text=Gambar+Error'; };
-  modalBody.textContent = artikel.konten;
-  modal.classList.add('show');
-}
-
-closeModal.addEventListener('click', () => modal.classList.remove('show'));
-modal.addEventListener('click', (e) => {
-  if (e.target === modal) modal.classList.remove('show');
-});
 
 tabBtns.forEach(btn => {
   btn.addEventListener('click', () => {
