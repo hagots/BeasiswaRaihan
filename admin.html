@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Kelola Artikel</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* tambahan khusus admin */
+    .admin-panel {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      max-width: 900px;
+      margin: 2rem auto;
+    }
+    .admin-panel h2 {
+      margin-bottom: 1.5rem;
+      color: #1a237e;
+    }
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .form-group textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+    .btn {
+      padding: 0.7rem 1.8rem;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-primary { background: #1a237e; color: white; }
+    .btn-primary:hover { background: #0d1555; }
+    .btn-danger { background: #d32f2f; color: white; }
+    .btn-danger:hover { background: #b71c1c; }
+    .btn-secondary { background: #eee; color: #333; }
+    .btn-secondary:hover { background: #ddd; }
+
+    .article-list {
+      margin-top: 2rem;
+      border-top: 2px solid #eee;
+      padding-top: 1.5rem;
+    }
+    .article-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #f0f0f0;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .article-item .info {
+      flex: 1;
+      min-width: 150px;
+    }
+    .article-item .info strong { display: block; }
+    .article-item .actions button {
+      margin-left: 0.5rem;
+    }
+    .login-box {
+      max-width: 400px;
+      margin: 4rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .login-box h2 { text-align: center; margin-bottom: 1.5rem; }
+    .login-box .form-group { margin-bottom: 1rem; }
+    .login-box .btn { width: 100%; }
+    .logout-btn {
+      float: right;
+      background: #d32f2f;
+      color: white;
+      border: none;
+      padding: 0.4rem 1.2rem;
+      border-radius: 30px;
+      cursor: pointer;
+    }
+    .logout-btn:hover { background: #b71c1c; }
+    .status-msg {
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      display: none;
+    }
+    .status-msg.success { background: #e8f5e9; color: #2e7d32; display: block; }
+    .status-msg.error { background: #ffebee; color: #c62828; display: block; }
+    .loading { opacity: 0.6; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔐 Panel Admin</h1>
+    <div>
+      <a href="index.html" style="color:white; margin-right:1rem;">← Kembali ke Portal</a>
+      <button id="logoutBtn" class="logout-btn" style="display:none;">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Form Login -->
+    <div id="loginSection" class="login-box">
+      <h2>Masuk sebagai Admin</h2>
+      <div id="loginStatus" class="status-msg"></div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="admin@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary" id="loginBtn">Masuk</button>
+    </div>
+
+    <!-- Dashboard Admin (hanya tampil setelah login) -->
+    <div id="adminPanel" class="admin-panel" style="display:none;">
+      <h2>📝 Kelola Artikel</h2>
+
+      <div id="formStatus" class="status-msg"></div>
+
+      <form id="articleForm">
+        <input type="hidden" id="editId" value="" />
+        <div class="form-group">
+          <label>Judul Artikel *</label>
+          <input type="text" id="judul" required />
+        </div>
+        <div class="form-group">
+          <label>Kategori *</label>
+          <select id="kategori" required>
+            <option value="ptn">🏛 Profil PTN Top 10</option>
+            <option value="beasiswa">🎓 Informasi Beasiswa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ringkasan (opsional)</label>
+          <input type="text" id="ringkasan" placeholder="Tampilan singkat di kartu" />
+        </div>
+        <div class="form-group">
+          <label>Konten (isi artikel) *</label>
+          <textarea id="konten" required></textarea>
+        </div>
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+          <button type="submit" class="btn btn-primary" id="submitBtn">Simpan Artikel</button>
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Batal</button>
+        </div>
+      </form>
+
+      <div class="article-list">
+        <h3>Daftar Artikel</h3>
+        <div id="articleListContainer">
+          <!-- akan diisi JS -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

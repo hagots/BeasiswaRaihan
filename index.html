@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Info Kampus & Beasiswa</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>📘 Portal Kampus & Beasiswa</h1>
+    <div class="admin-link">
+      <a href="admin.html">🔐 Admin</a>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="ptn">🏛 Profil PTN Top 10</button>
+    <button class="tab-btn" data-tab="beasiswa">🎓 Informasi Beasiswa</button>
+  </nav>
+
+  <main>
+    <div id="articles-container">
+      <!-- Artikel akan di-render oleh JavaScript -->
+    </div>
+  </main>
+
+  <!-- Modal Detail Artikel -->
+  <div id="detail-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2 id="detail-title"></h2>
+      <div id="detail-body"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 - Portal Edukasi</p>
+  </footer>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
