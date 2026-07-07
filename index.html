@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Info Kampus & Beasiswa</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
 </head>
 <body>
   <header>
-    <h1>📘 Portal Kampus & Beasiswa</h1>
+    <h1>📘 <span>Portal</span> Kampus & Beasiswa</h1>
     <div class="admin-link">
       <a href="admin.html">🔐 Admin</a>
     </div>
@@ -25,11 +27,13 @@
     </div>
   </main>
 
-  <!-- Modal Detail Artikel -->
+  <!-- Modal Detail -->
   <div id="detail-modal" class="modal">
     <div class="modal-content">
       <span class="close-modal">&times;</span>
       <h2 id="detail-title"></h2>
+      <div id="detail-meta"></div>
+      <img id="detail-image" src="" alt="Gambar artikel" />
       <div id="detail-body"></div>
     </div>
   </div>
