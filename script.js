@@ -14,42 +14,51 @@ const modalImage = document.getElementById('detail-image');
 const modalBody = document.getElementById('detail-body');
 const closeModal = document.querySelector('.close-modal');
 
-// Fungsi ambil data dengan error handling
+// Fungsi utama memuat artikel dengan fallback jika indeks belum dibuat
 async function loadArticles(kategori) {
   try {
     console.log(`📥 Memuat artikel untuk kategori: ${kategori}`);
 
-    // Coba pakai orderBy tanggal, jika gagal, pakai tanpa orderBy
-    let q;
+    let snapshot;
+    let useOrderBy = true;
+
     try {
-      q = query(
+      // Coba pakai orderBy tanggal
+      const q = query(
         collection(db, 'artikel'),
         where('kategori', '==', kategori),
         orderBy('tanggal', 'desc')
       );
-    } catch (err) {
-      console.warn('⚠️ Field tanggal mungkin belum ada, menggunakan urutan default.');
-      q = query(
-        collection(db, 'artikel'),
-        where('kategori', '==', kategori)
-      );
+      snapshot = await getDocs(q);
+    } catch (error) {
+      // Jika error karena indeks, kita tangkap dan jalankan tanpa orderBy
+      if (error.code === 'failed-precondition' && error.message.includes('index')) {
+        console.warn('⚠️ Indeks belum dibuat, mengambil data tanpa urutan dan sorting manual.');
+        useOrderBy = false;
+        const q = query(
+          collection(db, 'artikel'),
+          where('kategori', '==', kategori)
+        );
+        snapshot = await getDocs(q);
+      } else {
+        throw error; // lempar error lain
+      }
     }
 
-    const snapshot = await getDocs(q);
     console.log(`✅ Jumlah dokumen ditemukan: ${snapshot.size}`);
 
     articles = [];
     snapshot.forEach(doc => {
       const data = doc.data();
-      // Jika tidak ada tanggal, tambahkan default
       if (!data.tanggal) {
         data.tanggal = { seconds: Date.now() / 1000 };
       }
       articles.push({ id: doc.id, ...data });
     });
 
-    if (articles.length === 0) {
-      console.warn('⚠️ Tidak ada artikel untuk kategori ini.');
+    // Jika tidak pakai orderBy, urutkan manual (terbaru dulu)
+    if (!useOrderBy) {
+      articles.sort((a, b) => (b.tanggal?.seconds || 0) - (a.tanggal?.seconds || 0));
     }
 
     renderArticles(articles);
@@ -59,7 +68,7 @@ async function loadArticles(kategori) {
   }
 }
 
-// Render kartu artikel
+// Render kartu artikel (sama seperti sebelumnya)
 function renderArticles(data) {
   if (data.length === 0) {
     container.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:#94a3b8; padding:3rem;">Belum ada artikel untuk kategori ini.</p>`;
@@ -87,7 +96,6 @@ function renderArticles(data) {
     `;
   }).join('');
 
-  // Event klik kartu
   document.querySelectorAll('.article-card').forEach(card => {
     card.addEventListener('click', () => {
       const id = card.dataset.id;
@@ -97,7 +105,6 @@ function renderArticles(data) {
   });
 }
 
-// Tampilkan modal detail
 function showDetail(artikel) {
   modalTitle.textContent = artikel.judul;
   const tanggal = artikel.tanggal?.seconds
@@ -111,13 +118,11 @@ function showDetail(artikel) {
   modal.classList.add('show');
 }
 
-// Tutup modal
 closeModal.addEventListener('click', () => modal.classList.remove('show'));
 modal.addEventListener('click', (e) => {
   if (e.target === modal) modal.classList.remove('show');
 });
 
-// Event tab
 tabBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     tabBtns.forEach(b => b.classList.remove('active'));
