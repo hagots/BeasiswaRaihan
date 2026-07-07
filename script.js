@@ -2,13 +2,31 @@
 import { db } from './firebase-config.js';
 import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-let currentTab = 'ptn';
-let articles = [];
-
 const container = document.getElementById('articles-container');
 const tabBtns = document.querySelectorAll('.tab-btn');
 
+// Pengecekan elemen
+if (!container) {
+  console.error('❌ Container #articles-container tidak ditemukan!');
+} else {
+  console.log('✅ Container ditemukan.');
+}
+
+if (tabBtns.length === 0) {
+  console.error('❌ Tombol tab tidak ditemukan!');
+} else {
+  console.log(`✅ Ditemukan ${tabBtns.length} tombol tab.`);
+}
+
+let currentTab = 'ptn';
+let articles = [];
+
 async function loadArticles(kategori) {
+  if (!container) {
+    console.error('❌ Container tidak ada, tidak bisa memuat artikel.');
+    return;
+  }
+
   try {
     console.log(`📥 Memuat artikel untuk kategori: ${kategori}`);
 
@@ -59,6 +77,7 @@ async function loadArticles(kategori) {
 }
 
 function renderArticles(data) {
+  if (!container) return;
   if (data.length === 0) {
     container.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:#94a3b8; padding:3rem;">Belum ada artikel untuk kategori ini.</p>`;
     return;
@@ -88,14 +107,19 @@ function renderArticles(data) {
   }).join('');
 }
 
-tabBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    tabBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentTab = btn.dataset.tab;
-    loadArticles(currentTab);
+// Event tab (hanya jika ada tombol)
+if (tabBtns.length > 0) {
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTab = btn.dataset.tab;
+      loadArticles(currentTab);
+    });
   });
-});
+} else {
+  console.warn('⚠️ Tidak ada tombol tab, tidak bisa pasang event listener.');
+}
 
 // Muat awal
 loadArticles('ptn');
